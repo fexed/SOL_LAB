@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <time.h>
 
-#define N 1000
-#define K 15
+#define K 1000
+#define N 10
 
 void main(int argc, char* argv[]) {
 	int *numbers = calloc(K, sizeof(int));
@@ -14,9 +14,7 @@ void main(int argc, char* argv[]) {
 	*seed = time(NULL);
 	for (i = 0; i < K; i++) {
 		numbers[i] = rand_r(seed)%N;
-		printf("%d ", numbers[i]);
 	}
-	printf("\n\n");
 
 	for (i = 0; i < K; i++) {
 		C[numbers[i]]++;
@@ -27,7 +25,6 @@ void main(int argc, char* argv[]) {
 			C[i] = (C[i] * 100)/K;
 			printf("%d\t%f\n", i, C[i]);
 		}
-		free((C + i));
 	}
 	free(C);
 
