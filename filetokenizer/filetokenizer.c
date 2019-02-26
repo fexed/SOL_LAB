@@ -5,7 +5,6 @@
 #define MAXCH 1024
 
 char* reverse(char* toreverse) {
-	char* reversed = malloc(sizeof(toreverse));
 	char *p1, *p2;
       if (! toreverse || ! *toreverse)
             return toreverse;
@@ -31,12 +30,16 @@ int main(int argc, char *argv[]) {
 	} else {
 		fileout = fopen(argv[2], "w");
 	}
-	
+
 	char* buf = malloc(MAXCH*sizeof(char));
 	while (fgets(buf, MAXCH, filein)) {
 		fprintf(fileout, "%s\n", strtok(reverse(buf), "\n"));
 	}
+	fclose(filein);
+	fclose(fileout);
 	free(buf);
+	//free(filein);
+	//free(fileout);
 
 	return 0;
 }
