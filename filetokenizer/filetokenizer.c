@@ -26,7 +26,12 @@ int main(int argc, char *argv[]) {
 	}
 
 	filein = fopen(argv[1], "r");
-	fileout = fopen(argv[2], "w");
+	if (argc == 4 && (strcmp(argv[3], "a") == 0)) {
+		fileout = fopen(argv[2], "a");
+	} else {
+		fileout = fopen(argv[2], "w");
+	}
+	
 	char* buf = malloc(MAXCH*sizeof(char));
 	while (fgets(buf, MAXCH, filein)) {
 		fprintf(fileout, "%s\n", strtok(reverse(buf), "\n"));
