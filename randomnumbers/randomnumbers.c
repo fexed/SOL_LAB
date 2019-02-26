@@ -23,7 +23,7 @@ void main(int argc, char* argv[]) {
 	for (i = 0; i < N; i++) {
 		if (C[i] > 0) {
 			C[i] = (C[i] * 100)/K;
-			printf("%d\t%f\n", i, C[i]);
+			printf("%d\t%.1f\%\n", i, C[i]);
 		}
 	}
 	free(C);
