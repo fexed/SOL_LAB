@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <time.h>
 
 #define N 1000
@@ -9,6 +10,7 @@ void main(int argc, char* argv[]) {
 	double *C = calloc(N, sizeof(double));
 	int i;
 	unsigned int *seed = malloc(sizeof(int));
+
 	*seed = time(NULL);
 	for (i = 0; i < K; i++) {
 		numbers[i] = rand_r(seed)%N;
@@ -25,5 +27,13 @@ void main(int argc, char* argv[]) {
 			C[i] = (C[i] * 100)/K;
 			printf("%d\t%f\n", i, C[i]);
 		}
+		free((C + i));
 	}
+	free(C);
+
+	for (i = i; i < N; i++) {
+		free((numbers + i));
+	}
+	free(numbers);
+	free(seed);
 }
