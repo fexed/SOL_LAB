@@ -13,7 +13,6 @@ int main(int argc, char *argv[]) {
     secondastringa = strcpy(secondastringa, argv[2]); //per poter tokenizzare più volte la stessa stringa
     while (token1) {
 	printf("%s\n", token1);
-	char* saveptr2 = malloc(sizeof(char*));
 	char* token2 = strtok(secondastringa, " ");
 	while(token2) {
 	    printf("%s\n", token2);
