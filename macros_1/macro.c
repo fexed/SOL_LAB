@@ -28,5 +28,6 @@ int main() {
 	    ELEM(M,i,j) = i+j;    
     
     PRINTMAT(M, dimN, dimM);
+    free(M);
     return 0;
 }
