@@ -7,7 +7,7 @@
 
 #define CHECK_PTR(M, str) \
 	if (M == NULL) { \
-		perror("Errore in allocazione"); \
+		perror(str); \
 		return -1; \
 	}
 
