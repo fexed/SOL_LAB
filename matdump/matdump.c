@@ -18,7 +18,7 @@ int main (int argc, char* argv[]) {
 		return -1;
 	}
 	N = strtol(argv[1], NULL, 10);
-	M = malloc(N*N*sizeof(float));
+	M = (float*) malloc(N*N*sizeof(float));
 	for (i = 0; i < N; i++) {
 		for (j = 0; j < N; j++) {
 			M[(i*N)+j] = (i+j)/2.0;
