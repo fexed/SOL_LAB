@@ -46,7 +46,8 @@ int insertList(list_t *L, const char *str) {
 			newblock->word = malloc(strlen(str)*sizeof(char));
 			strcpy(newblock->word, str);
 
-			newblock->next = L;
+			newblock->next = malloc(sizeof(L));
+			memcpy(newblock->next, L, sizeof(list_t)); //TODO FIX
 			*L = *newblock;
 			return 0;
 		} else {
@@ -62,7 +63,7 @@ int insertList(list_t *L, const char *str) {
 }
 
 void printList(list_t *L) {
-	printf("%s -> ", L->word);
+	printf("%s >", L->word);
 	if (L->next != NULL) printList(L->next);
 }
 
