@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define CHECK_PTR(M, string) \
-	if (M == NULL) { \
+#define CHECK_PTR(pntr, string) \
+	if (pntr == NULL) { \
 		perror(string); \
 		return -1; \
 	}
@@ -32,6 +32,7 @@ int main (int argc, char* argv[]) {
 	outfile_bin = fopen("matdump.dat", "w");
 	CHECK_PTR(outfile_bin, "outfile_bin");
 
+	fprintf(outfile_txt, "%d\n", N);
 	for (i = 0; i < N; i++) {
 		for (j = 0; j < N; j++) {
 			fprintf(outfile_txt, "%.2f\t", M[(i*N)+j]);
@@ -40,6 +41,7 @@ int main (int argc, char* argv[]) {
 	}
 	fclose(outfile_txt);
 
+	fwrite(&N, sizeof(int), 1, outfile_bin);
 	fwrite(M, sizeof(float), N*N, outfile_bin);
 	fclose(outfile_bin);
 
