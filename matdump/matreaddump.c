@@ -38,9 +38,9 @@ int main(int argc, char* argv[]) {
 	}
 
 	txtfile = fopen(argv[1], "r");
-	CHECK_PTR(txtfile, "matdump.txt");
+	CHECK_PTR(txtfile, argv[1]);
 	datfile = fopen(argv[2], "r");
-	CHECK_PTR(datfile, "matdump.dat");
+	CHECK_PTR(datfile, argv[2]);
 
 	result = fscanf(txtfile, "%d\n", &N);
 	CHECK_RESULT(result);

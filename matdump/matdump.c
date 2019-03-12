@@ -28,9 +28,9 @@ int main (int argc, char* argv[]) {
 	}
 
 	outfile_txt = fopen("matdump.txt", "w");
-	CHECK_PTR(outfile_txt, "outfile_txt");
+	CHECK_PTR(outfile_txt, "matdump.txt");
 	outfile_bin = fopen("matdump.dat", "w");
-	CHECK_PTR(outfile_bin, "outfile_bin");
+	CHECK_PTR(outfile_bin, "matdump.dat");
 
 	fprintf(outfile_txt, "%d\n", N);
 	for (i = 0; i < N; i++) {
