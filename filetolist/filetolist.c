@@ -63,13 +63,15 @@ int insertList(list_t *L, const char *str) {
 }
 
 void printList(list_t *L) {
-	printf("%s >", L->word);
+	printf("[%s] >", L->word);
 	if (L->next != NULL) printList(L->next);
 }
 
 int main (int argc, char* argv[]) {
 	FILE *inputfile;
 	list_t *lst;
+	char* buff;
+	int result;
 
 	if (argc < 2) {
 		printf("usage: %s file\n", argv[0]);
@@ -80,22 +82,17 @@ int main (int argc, char* argv[]) {
 	CHECK_PTR(inputfile, argv[1]);
 
 	lst = createList();
-	insertList(lst, "Bbc");
-	printList(lst);printf("\n");
-	insertList(lst, "Abc");
-	printList(lst);printf("\n");
-	insertList(lst, "Dbc");
-	printList(lst);printf("\n");
-	insertList(lst, "Cdc");
-	printList(lst);printf("\n");
-	insertList(lst, "Ebc");
-	printList(lst);printf("\n");
-
+	buff = malloc(1024*sizeof(char));
+	result = fscanf(inputfile, "%s ", buff);
+	CHECK_RESULT(result);
+	while(result != EOF) {
+		insertList(lst, buff);
+		result = fscanf(inputfile, "%s ", buff);
+	}
 
 	printList(lst);
+	printf("\n");
 	destroyList(lst);
-
-
 	fclose(inputfile);
 	return 0;
 }
