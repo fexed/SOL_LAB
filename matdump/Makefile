@@ -1,7 +1,10 @@
+CC = g++
+CFLAGS = -g -O3 -Wall -pedantic
+
 all :
 	@echo "Compiling"
-	g++ -g -O3 -Wall -pedantic matdump.c -o matdump
-	g++ -g -O3 -Wall -pedantic matreaddump.c -o matreaddump
+	$(CC) $(CFLAGS) matdump.c -o matdump
+	$(CC) $(CFLAGS) matreaddump.c -o matreaddump
 
 clean : 
 	rm matdump matdump.txt matdump.dat
