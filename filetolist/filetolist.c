@@ -18,7 +18,7 @@
 int main (int argc, char* argv[]) {
 	FILE *inputfile;
 	list_t *lst;
-	char* buff;
+	char *buff;
 	int result;
 
 	if (argc < 2) {
