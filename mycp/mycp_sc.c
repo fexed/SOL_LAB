@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 #define CHECK_PTR(pntr, string) \
 	if (pntr == NULL) { \
@@ -17,7 +19,7 @@
 int main(int argc, char *argv[]) {
 	int buffersize = 256;
 	char *buffer;
-	FILE *filein, *fileout;	
+	int filein, fileout;	
 
 	if (argc < 3 || argc > 4) {
 		printf("usage: %s filein fileout [buffersize]\n", argv[0]);
@@ -27,19 +29,19 @@ int main(int argc, char *argv[]) {
 	if (argc == 4) buffersize = atoi(argv[3]);
 	buffer = malloc(buffersize*sizeof(char));
 
-	filein = fopen(argv[1], "r");
-	CHECK_PTR(filein, argv[1]);
+	filein = open(argv[1], O_RDONLY);
+	//CHECK_PTR(filein, argv[1]);
 
-	fileout = fopen(argv[2], "w");
-	CHECK_PTR(fileout, argv[2]);
+	fileout = open(argv[2], O_WRONLY|O_CREAT, 0700);
+	//CHECK_PTR(fileout, argv[2]);
 
-	while (fread(buffer, sizeof(char), buffersize, filein) > 0) {
-		fwrite(buffer, sizeof(char), buffersize, fileout);
+	while (read(filein, buffer, buffersize) > 0) {
+		write(fileout, buffer, buffersize);
 	}
 
 	free(buffer);
-	fclose(filein);
-	fclose(fileout);
+	close(filein);
+	close(fileout);
 
 	return 0;
 }
