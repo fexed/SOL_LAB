@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
 	filein = open(argv[1], O_RDONLY);
 	//CHECK_PTR(filein, argv[1]);
 
-	fileout = open(argv[2], O_WRONLY|O_CREAT, 0700);
+	fileout = open(argv[2], O_WRONLY|O_CREAT, 0600);
 	//CHECK_PTR(fileout, argv[2]);
 
 	while (read(filein, buffer, buffersize) > 0) {
