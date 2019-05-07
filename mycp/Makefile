@@ -8,7 +8,7 @@ LIBS    =                # vanno messe qui le librerie da linkare
 SOURCES=$(wildcard *.c)  # considera tutti i file .c nella directory 
 BINS=$(SOURCES:.c=)      # rimuove il suffisso .c dalla lista SOURCES
 
-.PHONY: all clean cleanall
+.PHONY: all clean cleanall test
 
 # personalizziamo la generazione dell'eseguibile da un .c utilizzando una Pattern Rule
 # Pattern Rules documentation:  
@@ -18,6 +18,9 @@ BINS=$(SOURCES:.c=)      # rimuove il suffisso .c dalla lista SOURCES
 
 # prima regola contenente il target
 all: $(BINS)
+
+test: 
+	letstest.sh
 
 clean:
 	\rm -f *~
