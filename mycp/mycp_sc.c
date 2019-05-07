@@ -3,19 +3,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#define CHECK_PTR(pntr, string) \
-	if (pntr == NULL) { \
-		perror(string); \
-		return -1; \
-	}
-
-#define CHECK_RESULT(res) \
-	if (result == EOF || result == 0) { \
-		perror("result"); \
-		return -1; \
-	}
-
-
 int main(int argc, char *argv[]) {
 	int buffersize = 256;
 	char *buffer;
