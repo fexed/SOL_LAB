@@ -26,7 +26,7 @@ static void* lettore(void* arg) {
 	int pipe;
 	FILE* inputfile;
 
-	pipe = open("LT_pipe", O_RDWR);
+	pipe = open("LT_pipe", O_WRONLY);
 	if (pipe == -1) {
 		printf("L\terror opening LT_pipe\n");
 		pthread_exit(NULL);
@@ -55,13 +55,13 @@ static void* tokenizzatore(void* arg) {
 	int result;
 	int pipeLT, pipeTU;
 
-	pipeLT = open("LT_pipe", O_RDWR);
+	pipeLT = open("LT_pipe", O_RDONLY);
 	if (pipeLT == -1) {
 		printf("T\terror opening LT_pipe\n");
 		pthread_exit(NULL);
 	} else printf("T\tLT_pipe opened\n");
 
-	pipeTU = open("TU_pipe", O_RDWR);
+	pipeTU = open("TU_pipe", O_WRONLY);
 	if (pipeTU == -1) {
 		printf("T\terror opening TU_pipe\n");
 		pthread_exit(NULL);
@@ -89,7 +89,7 @@ static void* univocatore(void* arg) {
 	char* buff;
 	int result;
 	int pipe;
-	pipe = open("TU_pipe", O_RDWR);
+	pipe = open("TU_pipe", O_RDONLY);
 	if (pipe == -1) {
 		printf("U\terror opening TU_pipe\n");
 		pthread_exit(NULL);
