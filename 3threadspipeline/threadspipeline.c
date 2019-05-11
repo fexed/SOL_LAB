@@ -86,16 +86,16 @@ static void* tokenizzatore(void* arg) {
 }
 
 static void* univocatore(void* arg) {
-	char* buff;
-	int result;
-	int pipe;
+	char* buff, *words, *temp;
+	int result, pipe;
+	size_t len1, len2;
 	pipe = open("TU_pipe", O_RDONLY);
 	if (pipe == -1) {
 		printf("U\terror opening TU_pipe\n");
 		pthread_exit(NULL);
 	} else printf("U\tTU_pipe opened\n");
 
-
+	words = malloc(sizeof(char));
 	printf("U\tready\n");
 
 	buff = malloc(1024*sizeof(char));
@@ -103,10 +103,23 @@ static void* univocatore(void* arg) {
 		//pthread_mutex_lock(&LTmutex);
 		result = read(pipe, buff, 30);
 		//pthread_mutex_unlock(&LTmutex);
-		printf("U\tread: %s\n", buff);
-
+		//printf("U\tread: %s\n", buff);
+		if (strcasestr(words, buff) == NULL) {
+			len1 = strlen(words);
+			len2 = strlen(buff);
+			temp = malloc(len1+len2+1);
+			buff = strcat(buff, "\n");
+			memcpy(temp, words, len1);
+			memcpy(temp+len1, buff, len2+1);
+			//free(words);
+			words = malloc(strlen(temp));
+			memcpy(words, temp, strlen(temp));
+		}
 	} while(result > 0);
 	close(pipe);
+
+	printf("%s", words);
+	free(words);
 }
 
 int main (int argc, char* argv[]) {
@@ -120,8 +133,8 @@ int main (int argc, char* argv[]) {
 		printf("Using %s\n", argv[1]);
 	}
 
-	if ((mkfifo("LT_pipe", 0664) == -1) && errno != EEXIST) {printf("Errore creazione pipe L->T\n");}
-	if ((mkfifo("TU_pipe", 0664) == -1) && errno != EEXIST) {printf("Errore creazione pipe T->U\n");}
+	if ((mkfifo("LT_pipe", 0664) == -1) && errno != EEXIST) {printf("Errore creazione pipe LT\n");}
+	if ((mkfifo("TU_pipe", 0664) == -1) && errno != EEXIST) {printf("Errore creazione pipe TU\n");}
 
 	value = pthread_create(&Lid, NULL, *lettore, argv[1]);
 	CHECK_VALUE(value, "Lettore");
