@@ -14,11 +14,6 @@
 		perror(string); \
 	}
 
-#define CHECK_RESULT(res) \
-	if (res == EOF || res == 0) { \
-		perror("result"); \
-	}
-
 static int LT_pfd[2], TU_pfd[2];
 //[1] scrittura, [0] lettura
 static pthread_mutex_t LTmutex = PTHREAD_MUTEX_INITIALIZER;
@@ -28,27 +23,41 @@ static void* lettore(void* arg) {
 	char* filename = (char*) arg;
 	char* buff;
 	FILE* inputfile;
-	int result;
 
-	printf("Lettore: reading %s\n", filename);
+	printf("L\treading %s\n", filename);
 	inputfile = fopen(filename, "r");
 	CHECK_PTR(inputfile, filename);
 
 	buff = malloc(1024*sizeof(char));
 	buff = fgets(buff, 1024, inputfile);
 	while(buff != NULL) {
-		printf("%s", buff);
+		//pthread_mutex_lock(&LTmutex);
+		write(LT_pfd[1], buff, sizeof(buff));
+		//pthread_mutex_unlock(&LTmutex);
 		buff = fgets(buff, 1024, inputfile);
 	}
 
 	fclose(inputfile);
+	close(LT_pfd[1]);
 }
 
 static void* tokenizzatore(void* arg) {
+	char* buff;
+	int result;
 
+	printf("T\tready\n");
+	buff = malloc(1024*sizeof(char));
+	do {
+		//pthread_mutex_lock(&LTmutex);
+		result = read(LT_pfd[0], buff, 1024);
+		//pthread_mutex_unlock(&LTmutex);
+		printf("%s", buff);
+	} while(result > 0);
+	close(LT_pfd[0]);
 }
 
 static void* univocatore(void* arg) {
+	printf("U\tready\n");
 
 }
 
