@@ -17,6 +17,9 @@
 		perror(string); \
 	}
 
+#define BUFFSIZE 512
+#define WORDSIZE 16
+
 //static pthread_mutex_t LTmutex = PTHREAD_MUTEX_INITIALIZER;
 //static pthread_mutex_t TUmutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -37,17 +40,20 @@ static void* lettore(void* arg) {
 	CHECK_PTR(inputfile, filename);
 
 	printf("L\tready\n");
-	buff = malloc(1024*sizeof(char));
-	buff = fgets(buff, 1024, inputfile);
+	buff = malloc(BUFFSIZE*sizeof(char));
+	buff = fgets(buff, BUFFSIZE, inputfile);
 	while(buff != NULL) {
 		//pthread_mutex_lock(&LTmutex);
-		write(pipe, buff, 1024);
+		write(pipe, buff, BUFFSIZE);
 		//pthread_mutex_unlock(&LTmutex);
-		buff = fgets(buff, 1024, inputfile);
+		free(buff);
+		buff = malloc(BUFFSIZE*sizeof(char));
+		buff = fgets(buff, BUFFSIZE, inputfile);
 	}
-
+	free(buff);
 	fclose(inputfile);
 	close(pipe);
+	pthread_exit(NULL);
 }
 
 static void* tokenizzatore(void* arg) {
@@ -69,20 +75,27 @@ static void* tokenizzatore(void* arg) {
 
 
 	printf("T\tready\n");
-	buff = malloc(1024*sizeof(char));
+	buff = malloc(BUFFSIZE*sizeof(char));
 	do {
 		//pthread_mutex_lock(&LTmutex);
-		result = read(pipeLT, buff, 1024);
+		result = read(pipeLT, buff, BUFFSIZE);
 		//pthread_mutex_unlock(&LTmutex);
-		word = malloc(30*sizeof(char));
+		word = malloc(WORDSIZE*sizeof(char));
 		word = strtok(buff, " .,\n");
 		while (word != NULL) {
-			write(pipeTU, word, 30);
+			write(pipeTU, word, WORDSIZE);
+			free(word);
+			word = malloc(WORDSIZE*sizeof(char));
 			word = strtok(NULL, " .,\n");
 		}
+		free(word);
+		free(buff);
+		buff = malloc(BUFFSIZE*sizeof(char));
 	} while(result > 0);
+	free(buff);
 	close(pipeLT);
 	close(pipeTU);
+	pthread_exit(NULL);
 }
 
 static void* univocatore(void* arg) {
@@ -98,13 +111,13 @@ static void* univocatore(void* arg) {
 	words = malloc(sizeof(char));
 	printf("U\tready\n");
 
-	buff = malloc(1024*sizeof(char));
+	buff = malloc(BUFFSIZE*sizeof(char));
 	do {
 		//pthread_mutex_lock(&LTmutex);
-		result = read(pipe, buff, 30);
+		result = read(pipe, buff, WORDSIZE);
 		//pthread_mutex_unlock(&LTmutex);
 		//printf("U\tread: %s\n", buff);
-		if (strcasestr(words, buff) == NULL) {
+		if (strstr(words, buff) == NULL) {
 			len1 = strlen(words);
 			len2 = strlen(buff);
 			temp = malloc(len1+len2+1);
@@ -114,12 +127,17 @@ static void* univocatore(void* arg) {
 			//free(words);
 			words = malloc(strlen(temp));
 			memcpy(words, temp, strlen(temp));
+			free(temp);
 		}
+		free(buff);
+		buff = malloc(BUFFSIZE*sizeof(char));
 	} while(result > 0);
+	free(buff);
 	close(pipe);
 
 	printf("%s", words);
 	free(words);
+	pthread_exit(NULL);
 }
 
 int main (int argc, char* argv[]) {
