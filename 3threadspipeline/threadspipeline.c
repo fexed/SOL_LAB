@@ -40,14 +40,14 @@ static void* lettore(void* arg) {
 	CHECK_PTR(inputfile, filename);
 
 	printf("L\tready\n");
-	buff = malloc(BUFFSIZE*sizeof(char));
+	buff = calloc(BUFFSIZE, sizeof(char));
 	buff = fgets(buff, BUFFSIZE, inputfile);
 	while(buff != NULL) {
 		//pthread_mutex_lock(&LTmutex);
 		write(pipe, buff, BUFFSIZE);
 		//pthread_mutex_unlock(&LTmutex);
 		free(buff);
-		buff = malloc(BUFFSIZE*sizeof(char));
+		buff = calloc(BUFFSIZE, sizeof(char));
 		buff = fgets(buff, BUFFSIZE, inputfile);
 	}
 	free(buff);
@@ -75,22 +75,25 @@ static void* tokenizzatore(void* arg) {
 
 
 	printf("T\tready\n");
-	buff = malloc(BUFFSIZE*sizeof(char));
+	buff = calloc(BUFFSIZE, sizeof(char));
 	do {
 		//pthread_mutex_lock(&LTmutex);
 		result = read(pipeLT, buff, BUFFSIZE);
-		//pthread_mutex_unlock(&LTmutex);
-		word = malloc(WORDSIZE*sizeof(char));
-		word = strtok(buff, " .,\n");
-		while (word != NULL) {
-			write(pipeTU, word, WORDSIZE);
+		if (result > 0) {
+			buff = realloc(buff, result);
+			//pthread_mutex_unlock(&LTmutex);
+			word = calloc(WORDSIZE, sizeof(char));
+			word = strtok(buff, " .,\n");
+			while (word != NULL) {
+				write(pipeTU, word, WORDSIZE);
+				free(word);
+				word = calloc(WORDSIZE, sizeof(char));
+				word = strtok(NULL, " .,\n");
+			}
 			free(word);
-			word = malloc(WORDSIZE*sizeof(char));
-			word = strtok(NULL, " .,\n");
+			free(buff);
+			buff = calloc(BUFFSIZE, sizeof(char));
 		}
-		free(word);
-		free(buff);
-		buff = malloc(BUFFSIZE*sizeof(char));
 	} while(result > 0);
 	free(buff);
 	close(pipeLT);
@@ -108,10 +111,10 @@ static void* univocatore(void* arg) {
 		pthread_exit(NULL);
 	} else printf("U\tTU_pipe opened\n");
 
-	words = malloc(sizeof(char));
+	words = calloc(1, sizeof(char));
 	printf("U\tready\n");
 
-	buff = malloc(BUFFSIZE*sizeof(char));
+	buff = calloc(BUFFSIZE, sizeof(char));
 	do {
 		//pthread_mutex_lock(&LTmutex);
 		result = read(pipe, buff, WORDSIZE);
@@ -120,17 +123,17 @@ static void* univocatore(void* arg) {
 		if (strstr(words, buff) == NULL) {
 			len1 = strlen(words);
 			len2 = strlen(buff);
-			temp = malloc(len1+len2+1);
+			temp = calloc(len1+len2+1, sizeof(char));
 			buff = strcat(buff, "\n");
 			memcpy(temp, words, len1);
 			memcpy(temp+len1, buff, len2+1);
 			//free(words);
-			words = malloc(strlen(temp));
+			words = calloc(1, strlen(temp));
 			memcpy(words, temp, strlen(temp));
 			free(temp);
 		}
 		free(buff);
-		buff = malloc(BUFFSIZE*sizeof(char));
+		buff = calloc(BUFFSIZE, sizeof(char));
 	} while(result > 0);
 	free(buff);
 	close(pipe);
