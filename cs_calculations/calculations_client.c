@@ -23,10 +23,12 @@ int main(int argc, char *argv[]) {
 		if (errno == ENOENT) sleep(1); //socket non esiste
 		else return -1;
 	}
-
-	write(skt, "Hello world dal client attraverso il calzino", 45);
-	read(skt, buff, BUFFSIZE);
-	printf("Client riceve: %s\n", buff);
+	do {
+		scanf("%s", &buff);
+		write(skt, buff, BUFFSIZE);
+		read(skt, buff, BUFFSIZE);
+		printf("Client riceve: %s\n", buff);
+	} while (strcmp(buff, "exit") != 0);
 	close(skt);
 	return 0;
 }

@@ -19,12 +19,16 @@ int main(int argc, char *argv[]) {
 	skt = socket(AF_UNIX, SOCK_STREAM, 0);
 
 	bind(skt, (struct sockaddr *)&skta, sizeof(skta)); //cast necessario perché struct sockaddr* è tipo generico
-	listen(skt, SOMAXCONN);
-	skt_accepted = accept(skt, NULL, 0);
-	read(skt_accepted, buff, BUFFSIZE);
-	printf("Server riceve: %s\n", buff);
-	write(skt_accepted, "Sayoonara!", 11);
+	do {
+		listen(skt, SOMAXCONN);
+		skt_accepted = accept(skt, NULL, 0);
+		do {
+			read(skt_accepted, buff, BUFFSIZE);
+			printf("Server riceve: %s\n", buff);
+			write(skt_accepted, "Sayoonara!", 11);
+		} while (strcmp(buff, "exit") != 0);
+		close(skt_accepted);
+	} while (1);	
 	close(skt);
-	close(skt_accepted);
 	return 0;
 }
