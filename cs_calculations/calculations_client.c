@@ -26,8 +26,10 @@ int main(int argc, char *argv[]) {
 	do {
 		scanf("%s", &buff);
 		write(skt, buff, BUFFSIZE);
-		read(skt, buff, BUFFSIZE);
-		printf("Client riceve: %s\n", buff);
+		if (strcmp(buff, "exit") != 0) {
+			read(skt, buff, BUFFSIZE);
+			printf("Client riceve: %s\n", buff);
+		}
 	} while (strcmp(buff, "exit") != 0);
 	close(skt);
 	return 0;
