@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <string.h>
+#include <signal.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -10,10 +11,7 @@
 #define SOCKETNAME "./calzino"
 #define BUFFSIZE 100
 
-#define CHECK_VALUE(value, name) \
-	if (value != 0) { \
-		printf("Errore creazione thread %s\n", name); \
-	}
+int skt, skt_accepted;
 
 static void* calcolatore(void* arg) {
 	char* program = calloc(BUFFSIZE, sizeof(char));
@@ -25,12 +23,24 @@ static void* calcolatore(void* arg) {
 	pthread_exit(NULL);
 }
 
+static void gestInt(int signum) {
+	printf("Chiudo per segnale ricevuto %d", signum);
+	close(skt);
+	close(skt_accepted);
+	exit(EXIT_SUCCESS);
+}
+
 int main(int argc, char *argv[]) {
-	int skt, skt_accepted, value;
+	int value;
 	char buff[BUFFSIZE];
 	struct sockaddr_un skta;
 	pthread_t calcthreadid;
+	struct sigaction s;
 	FILE* outputfile;
+
+	memset(&s, 0, sizeof(s));
+	s.sa_handler = gestInt;
+	sigaction(SIGINT, &s, NULL);
 
 	strncpy(skta.sun_path, SOCKETNAME, UNIX_PATH_MAX);
 	skta.sun_family = AF_UNIX;
