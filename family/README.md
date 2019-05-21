@@ -1,0 +1,2 @@
+# Fork Family
+Scrivere un programma C che prende come argomento un intero N>1. L'intero N rappresenta il numero di processi figli che devono essere creati in totale. I processi vanno creati come segue: il processo main stampa il suo pid e crea un figlio attendendone quindi la sua terminazione, il processo figlio a sua volta stampa il suo pid e crea un altro figlio attendendone la terminazione e cosi' via fino ad ottenere N processi figli in tutto. L'output formattato che si richiede che venga stampato sullo standard output e' il seguente:
