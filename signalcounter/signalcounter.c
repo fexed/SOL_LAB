@@ -11,6 +11,7 @@ static void sigintgestore(int signum) {
 }
 
 static void sigstpgestore(int signum) {
+	printf("SIGINT ricevuti: %d", sigintcounter);
 	sigstpcounter += 1;
 }
 
@@ -25,11 +26,11 @@ int main() {
 	sigaction(SIGINT, &sig_int, NULL);
 	sigaction(SIGTSTP, &sig_stop, NULL);
 
-	printf("SIGINT\tSIGTSTP\n\n");
 	do {
 		sleep(1);
-		printf("%d\t%d\n", sigintcounter, sigstpcounter);
-	} while(sigintcounter < 3);
+	} while(sigstpcounter < 3);
+
+	printf("Premi un tasto per far continuare il programma\n");
 
 	return 0;
 }
