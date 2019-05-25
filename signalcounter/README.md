@@ -1,0 +1,2 @@
+# Signal Counter
+Scrivere un programma C che conta il numero di volte in cui l'utente invia il segnale SIGINT (Ctl-C) al processo. Quando il processo riceve il segnale SIGTSTP (Ctl-Z), il numero di SIGINT ricevuti viene stampato sullo standard output. Al terzo segnale SIGTSTP, il processo chiede all'utente se deve terminare o no attendendo una risposta per 10 secondi dallo standard input. Se l'utente non risponde entro 10 secondi un segnale SIGALRM termina il processo
