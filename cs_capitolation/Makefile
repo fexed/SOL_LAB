@@ -23,4 +23,4 @@ clean:
 	\rm -f *~
 
 cleanall: clean
-	\rm -f $(BINS)
+	\rm -f $(BINS) calzino
