@@ -1,5 +1,5 @@
 CC	= gcc -std=gnu99   # quale compilatore usare per compilare il codice
-CFLAGS	= -g -Wall       # flags passati al compilatore per debugging e warning etc..
+CFLAGS	= -g -Wall -pthread      # flags passati al compilatore per debugging e warning etc..
 OPTFLAGS= -O3            # flags passati al compilatore per ottimizzazione del codice
 INCLUDES= -I.            # path dove si trovano gli include (non di sistema)
 LDFLAGS = -L.            # path dove so trovano le librerie

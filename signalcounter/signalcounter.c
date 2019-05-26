@@ -1,10 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <pthread.h>
 #include <string.h>
 #include <signal.h>
 
 int sigintcounter = 0;
 int sigstpcounter = 0;
+
+static void* waiter(void* arg) {
+	sleep(10);
+	pthread_exit(NULL);
+}
 
 static void sigintgestore(int signum) {
 	sigintcounter += 1;
@@ -24,8 +30,11 @@ static void sigstpgestore(int signum) {
 }
 
 int main() {
+	int value;
+	char* input;
 	struct sigaction sig_stop;
 	struct sigaction sig_int;
+	pthread_t waiterpid;
 	
 	memset(&sig_stop, 0, sizeof(sig_stop));
 	memset(&sig_int, 0, sizeof(sig_int));
@@ -35,10 +44,17 @@ int main() {
 	sigaction(SIGTSTP, &sig_stop, NULL);
 
 	do {
-		sleep(1);
-	} while(sigstpcounter < 3);
+		printf("\n\t!!!\n");
+		sigstpcounter = 0;
+		do {
+			sleep(1);
+		} while(sigstpcounter < 3);
 
-	printf("Premi un tasto per far continuare il programma\n");
-
+		printf("Scrivi \"yes\" per far continuare il programma\n");
+		value = pthread_create(&waiterpid, NULL, *waiter, NULL);
+		input = "";
+		scanf("%s", &input);
+		pthread_join(waiterpid, NULL);
+	} while (strcmp("yes", input) == 0);
 	return 0;
 }
