@@ -17,18 +17,15 @@ pthread_t capthreadid[MAXTHREADS];
 
 static void* capitolatore(void* arg) {
 	int skt_accepted = (int *) arg;
+	int i;
 	char buff[BUFFSIZE];
-	char* s;
 
 	do {
 		read(skt_accepted, buff, BUFFSIZE);
-		s = buff;
-		while (*s) {
-			*s = toupper(*s);
-			s++;
-			write(skt_accepted, s, BUFFSIZE);
+		for (i = 0; i < BUFFSIZE; i++) {
+			buff[i] = toupper(buff[i]);
 		}
-
+		write(skt_accepted, buff, BUFFSIZE);
 	} while (strcmp(buff, "exit") != 0);
 
 	close(skt_accepted);
@@ -50,7 +47,6 @@ int main(int argc, char *argv[]) {
 	char buff[BUFFSIZE];
 	struct sockaddr_un skta;
 	struct sigaction s;
-	FILE* outputfile;
 
 	memset(&s, 0, sizeof(s));
 	s.sa_handler = gestInt;
@@ -59,9 +55,9 @@ int main(int argc, char *argv[]) {
 	strncpy(skta.sun_path, SOCKETNAME, UNIX_PATH_MAX);
 	skta.sun_family = AF_UNIX;
 	skt = socket(AF_UNIX, SOCK_STREAM, 0);
-	printf("Server listening");
-	
+
 	bind(skt, (struct sockaddr *)&skta, sizeof(skta)); //cast necessario perché struct sockaddr* è tipo generico
+	printf("Server listening");
 	do {
 		listen(skt, SOMAXCONN);
 		skt_accepted = accept(skt, NULL, 0);
