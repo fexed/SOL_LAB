@@ -7,14 +7,11 @@
 
 int sigintcounter = 0;
 int sigstpcounter = 0;
-
-static void* waiter(void* arg) {
-	alarm(10);
-	pthread_exit(NULL);
-}
+char* input;
 
 static void sigalrmgestore(int signum) {
-	write(1, "Terminazione", 13);
+	write(1, "Terminazione\n", 13);
+	free(input);
 	exit(0);
 }
 
@@ -39,12 +36,9 @@ static void sigstpgestore(int signum) {
 }
 
 int main() {
-	int value;
-	char* input;
 	struct sigaction sig_stop;
 	struct sigaction sig_int;
 	struct sigaction sig_alrm;
-	pthread_t waiterpid;
 	
 	memset(&sig_stop, 0, sizeof(sig_stop));
 	memset(&sig_int, 0, sizeof(sig_int));
@@ -54,7 +48,9 @@ int main() {
 	sigaction(SIGINT, &sig_int, NULL);
 	sigaction(SIGTSTP, &sig_stop, NULL);
 
+	input = malloc(1*sizeof(char)); //per evitare il free inutile subito dopo, hack
 	do {
+		free(input);
 		sig_alrm.sa_handler = sigalrmgestoreignora;
 		sigaction(SIGALRM, &sig_alrm, NULL);
 		printf("\n\t!!!\n");
@@ -64,11 +60,13 @@ int main() {
 		} while(sigstpcounter < 3);
 
 		printf("Scrivi \"yes\" per far continuare il programma\n");
-		value = pthread_create(&waiterpid, NULL, *waiter, NULL);
+		alarm(10);
 		sig_alrm.sa_handler = sigalrmgestore;
 		sigaction(SIGALRM, &sig_alrm, NULL);
 		input = calloc(10, sizeof(char));
 		scanf("%s", input);
 	} while (strcmp(input, "yes") == 0);
+	free(input);
+
 	return 0;
 }
