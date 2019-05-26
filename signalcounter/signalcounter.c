@@ -11,7 +11,15 @@ static void sigintgestore(int signum) {
 }
 
 static void sigstpgestore(int signum) {
-	printf("SIGINT ricevuti: %d", sigintcounter);
+	char* strbuff = "\t\tSIGINT ricevuti: ";
+	char* buff = calloc(50, sizeof(char));
+	char* numbuff = calloc(10, sizeof(char));
+	sprintf(numbuff, "%d\n", sigintcounter);
+	buff = strcat(buff, strbuff);
+	buff = strcat(buff, numbuff);
+	write(1, buff, 25);
+	free(buff);
+	free(numbuff);
 	sigstpcounter += 1;
 }
 
