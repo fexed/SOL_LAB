@@ -33,13 +33,15 @@ static void* capitolatore(void* arg) {
 }
 
 static void gestInt(int signum) {
-	printf("Chiudo per segnale ricevuto %d", signum);
 	int i;
-	close(skt);
-	for (i = 0; i < MAXTHREADS; i++) {
-		pthread_join(capthreadid[i], NULL);
+	if (signum == 2) {
+		write(1, "Chiudo per SIGINT", 18);
+		close(skt);
+		for (i = 0; i < MAXTHREADS; i++) {
+			pthread_join(capthreadid[i], NULL);
+		}
+		exit(EXIT_SUCCESS);
 	}
-	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[]) {
@@ -51,19 +53,23 @@ int main(int argc, char *argv[]) {
 	memset(&s, 0, sizeof(s));
 	s.sa_handler = gestInt;
 	sigaction(SIGINT, &s, NULL);
+	sigaction(SIGPIPE, &s, NULL);
 
 	strncpy(skta.sun_path, SOCKETNAME, UNIX_PATH_MAX);
 	skta.sun_family = AF_UNIX;
 	skt = socket(AF_UNIX, SOCK_STREAM, 0);
 
 	bind(skt, (struct sockaddr *)&skta, sizeof(skta)); //cast necessario perché struct sockaddr* è tipo generico
-	printf("Server listening");
+	write(1, "Server in ascolto\n", 18);
 	do {
 		listen(skt, SOMAXCONN);
 		skt_accepted = accept(skt, NULL, 0);
 		i = 0;
 		while(capthreadid[i] != NULL && i < MAXTHREADS) i++;
-		if (i < MAXTHREADS) pthread_create(&capthreadid[i], NULL, *capitolatore, skt_accepted);
+		if (i < MAXTHREADS) {
+			printf("Creato thread %d\n", i);
+			pthread_create(&capthreadid[i], NULL, *capitolatore, skt_accepted);
+		}
 		else close(skt_accepted);
 	} while (1);
 

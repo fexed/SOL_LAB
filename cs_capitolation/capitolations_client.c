@@ -11,7 +11,7 @@
 #define BUFFSIZE 100
 
 int main(int argc, char *argv[]) {
-	int skt, i;
+	int skt, i, pid;
 	char buff[BUFFSIZE];
 	struct sockaddr_un skta;
 
@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
 
 	for (i = 1; i < argc; i++) {
 		write(skt, argv[i], BUFFSIZE);
-		printf("%s\t->\t", argv[i]);
+		printf("[%d] %s\t->\t", pid, argv[i]);
 		read(skt, buff, BUFFSIZE);
 		printf("%s\n", buff);
 	}
