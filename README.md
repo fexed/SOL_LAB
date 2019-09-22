@@ -1,4 +1,4 @@
-# Sistemi Oerativi Laboratorio
+# Sistemi Operativi Laboratorio
 Raccolta di esercizi sviluppati durante l'a.a. 2018/19 per il corso di Sistemi Operativi dell'Università di Pisa
 
 # Operative Systems Lab
